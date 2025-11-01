@@ -1,0 +1,121 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The AGT — Beauty & Rejuvenation Center</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#9b5cf6;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#071226 0%,#07121a 60%),var(--bg);color:#e6eef8}
+    header{padding:28px 20px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6ee7b7);display:flex;align-items:center;justify-content:center;font-weight:700;color:#071226}
+    h1{font-size:20px;margin:0}
+    .tag{color:var(--muted);font-size:13px}
+    .container{max-width:1100px;margin:18px auto;padding:28px}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:20px}
+    .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 8px 30px rgba(3,7,18,0.6)}
+    .plate-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .plate{width:360px;height:360px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(155,92,246,0.12),transparent 20%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:grid;place-items:center;position:relative;border:1px solid rgba(255,255,255,0.03)}
+    .needle{position:absolute;width:4px;height:170px;background:linear-gradient(180deg,#ffd7f7,#ff88e6);left:50%;top:50%;transform-origin:50% 85%;transform:translateX(-50%) rotate(0deg);border-radius:4px}
+    .center-dot{width:26px;height:26px;background:linear-gradient(135deg,#fff,#9b5cf6);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 6px 18px rgba(155,92,246,0.18)}
+    .markers{position:absolute;inset:8px;border-radius:50%;pointer-events:none}
+    .marker{position:absolute;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.08);color:#071226;font-size:10px;display:flex;align-items:center;justify-content:center}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:linear-gradient(90deg,var(--accent),#6ee7b7);border:none;padding:10px 14px;border-radius:10px;color:#071226;font-weight:600;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:10px}
+    .t-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .t-item{background:var(--glass);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);font-size:14px}
+    footer{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">AGT</div>
+      <div>
+        <h1>The AGT — Beauty & Rejuvenation Center</h1>
+        <div class="tag">Restart · Rejuvenate · Remaster Life</div>
+      </div>
+    </div>
+    <div class="tag">AGTX8000 prerequisite · Treatments start at 8 BTC or US$100</div>
+  </header>  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <h2 style="margin-top:0">AGT Future of Beauty Plate — Time & Degree Clock</h2>
+        <p class="tag">The plate now acts as both a clock (seconds) and degree circle (0°–360°). Rotation speed is synchronized with time so the machine safely matches second intervals for smooth, human-safe motion.</p><div class="plate-wrap">
+      <div class="plate" id="plate">
+        <canvas id="plateClock" width="360" height="360" style="position:absolute;top:0;left:0;border-radius:50%"></canvas>
+        <div class="needle" id="needle"></div>
+        <div class="center-dot"></div>
+      </div>
+
+      <div class="controls">
+        <button id="autoFull">Auto Full Circle</button>
+        <button id="runJourney">Run Ritual Journey</button>
+        <button class="ghost" id="stopJourney">Emergency Stop</button>
+        <button class="ghost" id="reset">Reset</button>
+      </div>
+
+      <div style="width:100%" class="card">
+        <strong>Current Angle:</strong> <span id="angle">0° (True North)</span>
+        <div style="margin-top:8px"><strong>Last Command:</strong> <span id="lastCmd">—</span></div>
+        <div style="margin-top:8px"><strong>Elapsed Time:</strong> <span id="elapsed">00:00</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+  </main>  <footer>
+    Built by davidgomadza — Prototype for The AGT. Rotation synchronized with real seconds for safety.
+  </footer>  <script>
+    const plateClock = document.getElementById('plateClock');
+    const ctx = plateClock.getContext('2d');
+    const radius = plateClock.width / 2;
+    ctx.translate(radius, radius);
+
+    function drawClockFace(){
+      ctx.beginPath(); ctx.arc(0,0,radius-10,0,2*Math.PI); ctx.fillStyle='rgba(255,255,255,0.02)'; ctx.fill();
+      for(let i=0;i<60;i++){
+        const angle = (i*Math.PI/30);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(0,-radius+20);
+        ctx.lineTo(0,-radius+ (i%5==0?30:25));
+        ctx.strokeStyle = i%5==0?'#9b5cf6':'rgba(255,255,255,0.2)';
+        ctx.lineWidth = i%5==0?2:1;
+        ctx.stroke();
+        ctx.rotate(-angle);
+      }
+      ctx.font='10px Inter'; ctx.fillStyle='#94a3b8'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      for(let n=0;n<12;n++){
+        let ang = n*Math.PI/6;
+        let x = Math.sin(ang)*(radius-40);
+        let y = -Math.cos(ang)*(radius-40);
+        ctx.fillText(((n*30)).toString()+'°',x,y);
+      }
+    }
+    drawClockFace();
+
+    const needle=document.getElementById('needle');
+    const angleLabel=document.getElementById('angle');
+    const lastCmd=document.getElementById('lastCmd');
+    const elapsed=document.getElementById('elapsed');
+    let startTime=null, animFrame;
+
+    function renderAngle(a){needle.style.transform=`translateX(-50%) rotate(${a}deg)`;angleLabel.textContent=Math.round(a)+'°';}
+    function updateElapsed(){if(startTime){let t=Math.floor((Date.now()-startTime)/1000);elapsed.textContent=`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;}}
+
+    function speak(t){lastCmd.textContent=t;if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance(t);u.rate=1;u.pitch=1;u.lang='en-US';speechSynthesis.cancel();speechSynthesis.speak(u);}}
+
+    async function autoFullCircle(){
+      startTime=Date.now();let angle=0;let speed=6; // 6 degrees per second (safe speed)
+      function loop(){updateElapsed();angle=(Date.now()-startTime)/1000*speed;renderAngle(angle%360);if(angle<3600)animFrame=requestAnimationFrame(loop);else cancelAnimationFrame(animFrame);}loop();speak('Automatic full circle started. Safe speed active. Will complete one hour in one rotation.');}
+
+    document.getElementById('autoFull').addEventListener('click',autoFullCircle);
+    document.getElementById('stopJourney').addEventListener('click',()=>{cancelAnimationFrame(animFrame);speechSynthesis.cancel();lastCmd.textContent='Stopped';});
+    document.getElementById('reset').addEventListener('click',()=>{cancelAnimationFrame(animFrame);renderAngle(0);lastCmd.textContent='—';elapsed.textContent='00:00';startTime=null;});
+  </script></body>
+</html>
